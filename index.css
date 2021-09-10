@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+}
+
+h1 {
+  font-size: 60px;
+}
+h2 {
+  font-size: 30px;
+  margin: 0;
+}
+
+.fixed {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#gamestart {
+  top: 30%;
+  left: 0%;
+  width: 100%;
+  color: white;
+}
+
+#gameend {
+  top: 30%;
+  left: 0%;
+  width: 100%;
+  color: white;
+  display: none;
+}
+
+#scorecard {
+  top: 10px;
+  left: calc(50% - 75px);
+  width: 150px;
+  height: 100px;
+}
+
+#score {
+  font-size: 80px;
+  font-weight: 500;
+  font-family: fantasy;
+  color: white;
+}

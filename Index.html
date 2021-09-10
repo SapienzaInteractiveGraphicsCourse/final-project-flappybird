@@ -4,16 +4,25 @@
 <head>
     <meta charset="utf-8">
     <title>My first three.js app</title>
-    <style>
-        body {
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <!-- <script src="js/three.js"></script> -->
+    <script src="./libs/cannon.min.js"></script>
+    <script src="./libs/tween.umd.js"></script>
     <script type="module" src="index.js"></script>
+    <div class="fixed" id="scorecard">
+        <div id="score">0</div>
+    </div>
+    <div class="fixed" id="gamestart">
+        <h1>PRESS SPACE TO START</h1>
+        <h2>Use Space to jump</h2>
+        <h2>Use left and right arrow keys to move left and right</h2>
+    </div>
+    <div class="fixed" id="gameend">
+        <h1>GAME OVER</h1>
+        <h2>Score: <span id="endscore"></span></h2>
+    </div>
 </body>
 
 </html>

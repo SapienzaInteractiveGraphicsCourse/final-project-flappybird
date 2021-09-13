@@ -2,17 +2,20 @@ import * as THREE from "https://cdn.skypack.dev/three@0.132.2";
 // const THREE = require("three");
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/GLTFLoader.js";
 
-let scene, camera, renderer, loader, world;
+let scene, camera, renderer, loader, world, fpsInterval, then, now, elapsed;
 let speed = 0.25;
 let gameStarted = false;
 let gameOver = false;
 let score = 0;
+
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
     case " ":
       if (!gameStarted) {
         document.getElementById("gamestart").style.display = "none";
         setupEventListeners();
+        fpsInterval = 1000 / 80;
+        then = Date.now();
         animate();
         gameStarted = true;
       }
@@ -144,45 +147,50 @@ function animate() {
   if (!gameOver) {
     requestAnimationFrame(animate);
   }
-  TWEEN.update();
-  if (flappy.cannon) {
-    flappy.cannon.position.y -= speed;
-    if (flappy.cannon.position.z < -obstacle.maxHeight) {
-      flappy.cannon.velocity.z = 1;
-    }
-    const body = flappy.three;
-
-    if (flappy.cannon.velocity.z > 2) {
-      flappyRotateZ(body, (-3 * Math.PI) / 4);
-    } else if (flappy.cannon.velocity.z < -2) {
-      flappyRotateZ(body, -Math.PI / 4);
-    } else {
-      flappyRotateZ(body, -Math.PI / 2);
-    }
-
-    if (
-      flappy.cannon.position.y <=
-      obstacles[0].three.position.y - obstacle.width - 2
-    ) {
-      score += 1;
-      if (score % 2 === 0) {
-        speed += 0.02;
+  now = Date.now();
+  elapsed = now - then;
+  if (elapsed > fpsInterval) {
+    then = now - (elapsed % fpsInterval);
+    TWEEN.update();
+    if (flappy.cannon) {
+      flappy.cannon.position.y -= speed;
+      if (flappy.cannon.position.z < -obstacle.maxHeight) {
+        flappy.cannon.velocity.z = 1;
       }
-      document.getElementById("score").innerHTML = score;
-      console.log(score);
-      for (let i = 0; i < 6; i++) {
-        obstacles[i].three.geometry.dispose();
-        obstacles[i].three.material.dispose();
-        scene.remove(obstacles[i].three);
+      const body = flappy.three;
+
+      if (flappy.cannon.velocity.z > 2) {
+        flappyRotateZ(body, (-3 * Math.PI) / 4);
+      } else if (flappy.cannon.velocity.z < -2) {
+        flappyRotateZ(body, -Math.PI / 4);
+      } else {
+        flappyRotateZ(body, -Math.PI / 2);
       }
-      obstacles.splice(0, 6);
-      addObstacle(
-        obstacles[obstacles.length - 1].three.position.y - obstacle.depthSpace
-      );
+
+      if (
+        flappy.cannon.position.y <=
+        obstacles[0].three.position.y - obstacle.width - 2
+      ) {
+        score += 1;
+        if (score % 2 === 0) {
+          speed += 0.02;
+        }
+        document.getElementById("score").innerHTML = score;
+        console.log(score);
+        for (let i = 0; i < 6; i++) {
+          obstacles[i].three.geometry.dispose();
+          obstacles[i].three.material.dispose();
+          scene.remove(obstacles[i].three);
+        }
+        obstacles.splice(0, 6);
+        addObstacle(
+          obstacles[obstacles.length - 1].three.position.y - obstacle.depthSpace
+        );
+      }
     }
+    updatePhysics();
+    renderer.render(scene, camera);
   }
-  updatePhysics();
-  renderer.render(scene, camera);
 }
 // animate();
 

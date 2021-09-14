@@ -99,7 +99,6 @@ function init() {
       world.addBody(body);
       flappy.cannon.addEventListener("collide", function (e) {
         console.log("Collision detected", e);
-
         gameOver = true;
         document.getElementById("scorecard").style.display = "none";
         document.getElementById("gameend").style.display = "flex";
@@ -262,7 +261,7 @@ function createObstacle(x, y, width) {
 
   const geometry = new THREE.CylinderGeometry(width, width, height, 32);
   geometry.rotateX(Math.PI / 2);
-  const material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+  const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
   const cylinder = new THREE.Mesh(geometry, material);
   cylinder.position.set(x, y, -height / 2);
   // Cannon JS
@@ -279,7 +278,7 @@ function createObstacle(x, y, width) {
   const height2 = obstacle.maxHeight - height - obstacle.vertSpace;
   const geometry2 = new THREE.CylinderGeometry(width, width, height2, 32);
   geometry2.rotateX(Math.PI / 2);
-  const material2 = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+  const material2 = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
   const cylinder2 = new THREE.Mesh(geometry2, material2);
   cylinder2.position.set(x, y, -obstacle.maxHeight + height2 / 2);
   scene.add(cylinder2);

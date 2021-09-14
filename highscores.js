@@ -68,6 +68,7 @@ onValue(highscoreRef, (snapshot) => {
 });
 
 document.getElementById("name").addEventListener("change", (e) => {
+  document.getElementById("nameinput").style.display = "none";
   const name = e.target.value;
   const score = document.getElementById("endscore").innerHTML;
   showhighscores = true;

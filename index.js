@@ -7,6 +7,7 @@ let speed = 0.25;
 let gameStarted = false;
 let gameOver = false;
 let score = 0;
+let highscore = localStorage.getItem("highscore");
 
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
@@ -97,10 +98,18 @@ function init() {
       console.log(flappy);
       world.addBody(body);
       flappy.cannon.addEventListener("collide", function (e) {
+        highscore = 0;
         console.log("Collision detected", e);
+
         gameOver = true;
+        document.getElementById("scorecard").style.display = "none";
         document.getElementById("gameend").style.display = "flex";
         document.getElementById("endscore").innerHTML = score;
+        if ((highscore && score > highscore) || !highscore) {
+          document.getElementById("newhighscore").style.display = "flex";
+          highscore = score;
+          localStorage.setItem("highscore", score);
+        }
       });
 
       const wing1 = flappy.three.children[2];

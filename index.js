@@ -98,7 +98,6 @@ function init() {
       console.log(flappy);
       world.addBody(body);
       flappy.cannon.addEventListener("collide", function (e) {
-        highscore = 0;
         console.log("Collision detected", e);
 
         gameOver = true;

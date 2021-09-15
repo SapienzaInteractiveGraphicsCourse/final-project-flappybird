@@ -148,7 +148,7 @@ function init() {
         document.getElementById("scorecard").style.display = "none";
         document.getElementById("gameend").style.display = "flex";
         document.getElementById("endscore").innerHTML = score;
-        if ((highscore && score > 0) || !highscore) {
+        if ((highscore && score > highscore) || !highscore) {
           document.getElementById("newhighscore").style.display = "flex";
           highscore = score;
           localStorage.setItem("highscore", score);
@@ -475,7 +475,8 @@ function setupEventListeners() {
     click = true;
   });
   document.addEventListener("touchmove", (evt) => {
-    if (!xDown || !yDown) {
+    evt.preventDefault();
+    if (!firstX || !firstY) {
       return;
     }
     var xUp = evt.touches[0].clientX;

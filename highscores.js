@@ -30,9 +30,12 @@ const app = initializeApp(firebaseConfig);
 console.log(app);
 const db = getDatabase(app);
 let highscores = [];
-let showhighscores = false;
+let table, title;
 
 const highscoreUI = document.getElementById("highscoretable");
+document.getElementById("showleaderboard").addEventListener("click", () => {
+  showLeaderboard();
+});
 
 const highscoreRef = ref(db, "highscores/");
 onValue(highscoreRef, (snapshot) => {
@@ -43,35 +46,54 @@ onValue(highscoreRef, (snapshot) => {
     return b.score - a.score;
   });
   highscores = highscores.slice(0, 10);
-  if (showhighscores) {
-    let i = 1;
-    var table = document.createElement("table");
-    for (const score of highscores) {
-      var tr = document.createElement("tr");
-      var td = document.createElement("td");
-      td.innerHTML = i + ".";
-      tr.appendChild(td);
-      td = document.createElement("td");
-      td.innerHTML = score.name;
-      tr.appendChild(td);
-      td = document.createElement("td");
-      td.innerHTML = score.score;
-      tr.appendChild(td);
-      table.appendChild(tr);
-      i++;
-    }
-    let title = document.createElement("h2");
-    title.innerHTML = "HIGH SCORES";
-    highscoreUI.appendChild(title);
-    highscoreUI.appendChild(table);
-  }
+  showHighscore();
 });
+
+function showLeaderboard() {
+  get(highscoreRef).then((snapshot) => {
+    const data = snapshot.val();
+    console.log(JSON.stringify(data));
+    highscores = data;
+    highscores.sort((a, b) => {
+      return b.score - a.score;
+    });
+    highscores = highscores.slice(0, 10);
+    showHighscore();
+  });
+}
+
+function showHighscore() {
+  if (table && title) {
+    highscoreUI.removeChild(table);
+    highscoreUI.removeChild(title);
+  }
+  document.getElementById("showleaderboard").style.display = "none";
+  let i = 1;
+  table = document.createElement("table");
+  for (const score of highscores) {
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.innerHTML = i + ".";
+    tr.appendChild(td);
+    td = document.createElement("td");
+    td.innerHTML = score.name;
+    tr.appendChild(td);
+    td = document.createElement("td");
+    td.innerHTML = score.score;
+    tr.appendChild(td);
+    table.appendChild(tr);
+    i++;
+  }
+  title = document.createElement("h2");
+  title.innerHTML = "HIGH SCORES";
+  highscoreUI.appendChild(title);
+  highscoreUI.appendChild(table);
+}
 
 document.getElementById("name").addEventListener("change", (e) => {
   document.getElementById("nameinput").style.display = "none";
   const name = e.target.value;
   const score = document.getElementById("endscore").innerHTML;
-  showhighscores = true;
   get(highscoreRef).then((snapshot) => {
     highscores = snapshot.val();
     console.log("DAMANE", highscores);
@@ -81,6 +103,10 @@ document.getElementById("name").addEventListener("change", (e) => {
 });
 
 function writeToDB() {
+  highscores.sort((a, b) => {
+    return b.score - a.score;
+  });
+  highscores = highscores.slice(0, 10);
   set(ref(db, "/"), {
     highscores: highscores,
   });

@@ -3,7 +3,8 @@ import * as THREE from "https://cdn.skypack.dev/three@0.132.2";
 import { GLTFLoader } from "https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/GLTFLoader.js";
 
 let scene, camera, renderer, loader, world, fpsInterval, then, now, elapsed;
-let speed = 0.25;
+let coin;
+let speed = 0.3;
 let gameStarted = false;
 let gameOver = false;
 let score = 0;
@@ -15,7 +16,7 @@ window.addEventListener("keydown", (e) => {
       if (!gameStarted) {
         document.getElementById("gamestart").style.display = "none";
         setupEventListeners();
-        fpsInterval = 1000 / 80;
+        fpsInterval = 1000 / 60;
         then = Date.now();
         animate();
         gameStarted = true;
@@ -47,7 +48,7 @@ const flappy = { three: null, cannon: null };
 
 function init() {
   world = new CANNON.World();
-  world.gravity.set(0, 0, 30);
+  world.gravity.set(0, 0, 35);
   world.broadphase = new CANNON.NaiveBroadphase();
   world.solver.iterations = 40;
 
@@ -61,18 +62,62 @@ function init() {
   );
   camera.position.set(0, 10, -10);
   camera.lookAt(0, 0, -10);
-  camera.position.set(0, 10, -14);
+  camera.position.set(0, 10, -26.2);
 
   // Set up lights
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
   const sun = new THREE.DirectionalLight(0xffffcc);
-  sun.position.set(1, 10, -10);
+  sun.position.set(10, 10, -10);
   scene.add(sun);
 
   // Add flappy bird to scene
   loader = new GLTFLoader();
+  /* loader.load("assets/super_mario_coin/scene.gltf", function (gltf) {
+    coin = gltf.scene;
+    coin.rotation.x = Math.PI / 2;
+    coin.rotation.y = Math.PI;
+    coin.position.x = 0;
+    coin.position.y = -20;
+    coin.position.z = -10;
+    coin.scale.x = 0.05;
+    coin.scale.y = 0.05;
+    coin.scale.z = 0.05;
+    console.log(coin);
+    console.log(gltf);
+    const coinTween = new TWEEN.Tween(coin.rotation).to(
+      {
+        y: -Math.PI,
+      },
+      500
+    );
+    const coinTween2 = new TWEEN.Tween(coin.rotation).to(
+      {
+        y: Math.PI,
+      },
+      500
+    );
+    coinTween.chain(coinTween2);
+    coinTween2.chain(coinTween);
+    coinTween.start();
+    const coinTween3 = new TWEEN.Tween(coin.position).to(
+      {
+        z: -12,
+      },
+      500
+    );
+    const coinTween4 = new TWEEN.Tween(coin.position).to(
+      {
+        z: -10,
+      },
+      500
+    );
+    coinTween3.chain(coinTween4);
+    coinTween4.chain(coinTween3);
+    coinTween3.start();
+    scene.add(coin);
+  }); */
   loader.load(
     "assets/flappy_bird_3d/scene.gltf",
     function (gltf) {
@@ -81,16 +126,16 @@ function init() {
         gltf.scene.children[0].children[0].children[0].children[0].children[1];
       flappy.three.rotation.y = Math.PI;
       flappy.three.rotation.x = -Math.PI / 2;
-      flappy.three.position.z = -10;
+      flappy.three.position.z = -25;
       console.log(
         gltf.scene.children[0].children[0].children[0].children[0].children[1]
       );
 
       scene.add(flappy.three);
-      const sphere = new CANNON.Sphere(1.5);
+      const sphere = new CANNON.Sphere(1.2);
       let mass = 1;
       const body = new CANNON.Body({ mass, shape: sphere });
-      body.position.set(0, 0, -10);
+      body.position.set(0, 0, -25);
       flappy.cannon = body;
       flappy.cannon.position.copy(flappy.three.position);
       flappy.cannon.quaternion.copy(flappy.three.quaternion);
@@ -103,7 +148,7 @@ function init() {
         document.getElementById("scorecard").style.display = "none";
         document.getElementById("gameend").style.display = "flex";
         document.getElementById("endscore").innerHTML = score;
-        if ((highscore && score > highscore) || !highscore) {
+        if ((highscore && score > 0) || !highscore) {
           document.getElementById("newhighscore").style.display = "flex";
           highscore = score;
           localStorage.setItem("highscore", score);
@@ -161,7 +206,7 @@ function animate() {
     TWEEN.update();
     if (flappy.cannon) {
       flappy.cannon.position.y -= speed;
-      if (flappy.cannon.position.z < -obstacle.maxHeight) {
+      if (flappy.cannon.position.z < -obstacle.maxHeight + 2) {
         flappy.cannon.velocity.z = 1;
       }
       const body = flappy.three;
@@ -211,12 +256,39 @@ function updatePhysics() {
     flappy.three.position.copy(flappy.cannon.position);
     // flappy.three.quaternion.copy(flappy.cannon.quaternion);
     camera.position.x = flappy.cannon.position.x;
-    camera.position.z = flappy.cannon.position.z - 4;
+    camera.position.z = flappy.cannon.position.z - 1.2;
     camera.position.y = flappy.cannon.position.y + 10;
   }
 }
 
 function addSurface() {
+  const wall = new THREE.BoxGeometry(
+    surface.height,
+    surface.depth,
+    obstacle.maxHeight
+  );
+  const colorSky = new THREE.Color(`hsl(201, 100%, 50%)`);
+  const materialWall = new THREE.MeshBasicMaterial({ color: colorSky });
+  const meshWall = new THREE.Mesh(wall, materialWall);
+  meshWall.position.set(-surface.width / 2, -150, -obstacle.maxHeight / 2); // x, y, z
+  scene.add(meshWall);
+  const wall2 = new THREE.BoxGeometry(
+    surface.height,
+    surface.depth,
+    obstacle.maxHeight
+  );
+  const newWall = new THREE.Mesh(wall2, materialWall);
+  newWall.position.set(surface.width / 2, -150, -obstacle.maxHeight / 2); // x, y, z
+  scene.add(newWall);
+  const roofgeo = new THREE.BoxGeometry(
+    surface.width,
+    surface.depth,
+    surface.height
+  );
+  const roof = new THREE.Mesh(roofgeo, materialWall);
+  roof.position.set(0, -150, -obstacle.maxHeight); // x, y, z
+  scene.add(roof);
+
   // Three JS
   const geometry = new THREE.BoxGeometry(
     surface.width,
@@ -224,7 +296,7 @@ function addSurface() {
     surface.height
   );
   const color = new THREE.Color(`hsl(30, 100%, 50%)`);
-  const material = new THREE.MeshLambertMaterial({ color });
+  const material = new THREE.MeshToonMaterial({ color });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.set(0, -150, 0); // x, y, z
   scene.add(mesh);
@@ -257,13 +329,22 @@ function addObstacle(y) {
 
 function createObstacle(x, y, width) {
   // Create bottom obstacle
-  const height = Math.random() * (obstacle.maxHeight - obstacle.vertSpace);
-
+  let height = Math.random() * (obstacle.maxHeight - obstacle.vertSpace);
+  if (height < 3) {
+    height = 3;
+  } else if (height > obstacle.maxHeight - obstacle.vertSpace - 3) {
+    height = obstacle.maxHeight - obstacle.vertSpace - 3;
+  }
   const geometry = new THREE.CylinderGeometry(width, width, height, 32);
   geometry.rotateX(Math.PI / 2);
   const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
   const cylinder = new THREE.Mesh(geometry, material);
   cylinder.position.set(x, y, -height / 2);
+  const topgeom = new THREE.CylinderGeometry(width + 0.5, width + 0.5, 3, 32);
+  topgeom.rotateX(Math.PI / 2);
+  const topcyl = new THREE.Mesh(topgeom, material);
+  topcyl.position.set(x, y, -height + 1.5);
+  scene.add(topcyl);
   // Cannon JS
   const shape = new CANNON.Cylinder(width, width, height, 32);
   const massive = 0;
@@ -282,6 +363,12 @@ function createObstacle(x, y, width) {
   const cylinder2 = new THREE.Mesh(geometry2, material2);
   cylinder2.position.set(x, y, -obstacle.maxHeight + height2 / 2);
   scene.add(cylinder2);
+
+  const topgeom2 = new THREE.CylinderGeometry(width + 0.5, width + 0.5, 3, 32);
+  topgeom2.rotateX(Math.PI / 2);
+  const topcyl2 = new THREE.Mesh(topgeom2, material2);
+  topcyl2.position.set(x, y, -obstacle.maxHeight + height2 - 1.5);
+  scene.add(topcyl2);
 
   const shape2 = new CANNON.Cylinder(width, width, height2, 32);
   const mass2 = 0;
@@ -303,81 +390,78 @@ function flappyRotateZ(body, angle) {
 }
 
 function setupEventListeners() {
+  function jump() {
+    if (flappy.cannon.velocity.z > 5) {
+      flappy.cannon.velocity.z = -10;
+    } else {
+      // flappy.cannon.velocity.z -= 15;
+      flappy.cannon.applyImpulse(
+        new CANNON.Vec3(0, 0, -15),
+        new CANNON.Vec3(
+          flappy.cannon.position.x,
+          flappy.cannon.position.y,
+          flappy.cannon.position.z
+        )
+      );
+    }
+  }
+
+  function moveRight() {
+    if (flappy.cannon.position.x < 5) {
+      var tween = new TWEEN.Tween(flappy.cannon.position)
+        .to(
+          {
+            x:
+              flappy.cannon.position.x +
+              surface.width / 3 -
+              obstacle.horSpace / 2,
+          },
+          100
+        )
+        .start();
+      var tween = new TWEEN.Tween(flappy.three.rotation)
+        .to({ z: Math.PI / 8 }, 100)
+        .chain(new TWEEN.Tween(flappy.three.rotation).to({ z: 0 }, 100))
+        .start();
+    }
+  }
+
+  function moveLeft() {
+    if (flappy.cannon.position.x > -5) {
+      var tween = new TWEEN.Tween(flappy.cannon.position)
+        .to(
+          {
+            x:
+              flappy.cannon.position.x -
+              surface.width / 3 +
+              obstacle.horSpace / 2,
+          },
+          100
+        )
+        .start();
+      var tween = new TWEEN.Tween(flappy.three.rotation)
+        .to({ z: -Math.PI / 8 }, 100)
+        .chain(new TWEEN.Tween(flappy.three.rotation).to({ z: 0 }, 100))
+        .start();
+    }
+  }
   // Set up event listeners
   document.addEventListener("keydown", (e) => {
     switch (e.key) {
-      case "w":
-        camera.position.z -= 1;
-        break;
-      case "s":
-        camera.position.z += 1;
-        break;
-      case "a":
-        camera.position.x -= 1;
-        break;
-      case "d":
-        camera.position.x += 1;
-        break;
-      case "q":
-        camera.position.y += 1;
-        break;
-      case "e":
-        camera.position.y -= 1;
-        break;
       case " ":
-        if (flappy.cannon.velocity.z > 5) {
-          flappy.cannon.velocity.z = -10;
-        } else {
-          // flappy.cannon.velocity.z -= 15;
-          flappy.cannon.applyImpulse(
-            new CANNON.Vec3(0, 0, -15),
-            new CANNON.Vec3(
-              flappy.cannon.position.x,
-              flappy.cannon.position.y,
-              flappy.cannon.position.z
-            )
-          );
-        }
+        jump();
         break;
       case "ArrowLeft":
-        // box.cannon.position.x -= 1;
-        if (flappy.cannon.position.x > -5) {
-          var tween = new TWEEN.Tween(flappy.cannon.position)
-            .to(
-              {
-                x:
-                  flappy.cannon.position.x -
-                  surface.width / 3 +
-                  obstacle.horSpace / 2,
-              },
-              100
-            )
-            .start();
-          var tween = new TWEEN.Tween(flappy.three.rotation)
-            .to({ z: -Math.PI / 8 }, 100)
-            .chain(new TWEEN.Tween(flappy.three.rotation).to({ z: 0 }, 100))
-            .start();
-        }
+        moveLeft();
         break;
       case "ArrowRight":
-        // box.cannon.position.x += 1;
-        if (flappy.cannon.position.x < 5) {
-          var tween = new TWEEN.Tween(flappy.cannon.position)
-            .to(
-              {
-                x:
-                  flappy.cannon.position.x +
-                  surface.width / 3 -
-                  obstacle.horSpace / 2,
-              },
-              100
-            )
-            .start();
-          var tween = new TWEEN.Tween(flappy.three.rotation)
-            .to({ z: Math.PI / 8 }, 100)
-            .chain(new TWEEN.Tween(flappy.three.rotation).to({ z: 0 }, 100))
-            .start();
-        }
+        moveRight();
+        break;
+      case "a":
+        moveLeft();
+        break;
+      case "d":
+        moveRight();
         break;
     }
   });

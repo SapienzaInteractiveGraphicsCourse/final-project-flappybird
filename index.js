@@ -466,13 +466,45 @@ function setupEventListeners() {
     }
   });
   let click = false;
-  document.addEventListener("touchstart", () => {
+  let firstX = null;
+  let firstY = null;
+  document.addEventListener("touchstart", (e) => {
+    const firstTouch = e.touches[0];
+    firstX = firstTouch.clientX;
+    firstY = firstTouch.clientY;
     click = true;
   });
-  document.addEventListener("touchmove", () => {
+  document.addEventListener("touchmove", (evt) => {
+    if (!xDown || !yDown) {
+      return;
+    }
+    var xUp = evt.touches[0].clientX;
+    var yUp = evt.touches[0].clientY;
+
+    var xDiff = firstX - xUp;
+    var yDiff = firstY - yUp;
+
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      /*most significant*/
+      if (xDiff > 0) {
+        /* right swipe */
+        moveRight();
+      } else {
+        /* left swipe */
+        moveLeft();
+      }
+    }
     click = false;
   });
-  document.addEventListener("touchend", () => {
+  document.addEventListener("touchend", (e) => {
+    if (!gameStarted) {
+      document.getElementById("gamestart").style.display = "none";
+      setupEventListeners();
+      fpsInterval = 1000 / 60;
+      then = Date.now();
+      animate();
+      gameStarted = true;
+    }
     if (click) {
       jump();
     }

@@ -18,10 +18,10 @@ if (
 ) {
   // some code..
   document.getElementById("spacestart").innerHTML = "Tap screen to start";
-  document.getElementById("spacemove").innerHTML = "Tap screen to jump";
-  document.getElementById("spacestart").innerHTML =
+  document.getElementById("spacejump").innerHTML = "Tap screen to jump";
+  document.getElementById("arrowmove").innerHTML =
     "Swipe right and left to move horizontally";
-  document.getElementById("refres").innerHTML = "Refresh to restart";
+  document.getElementById("refresh").innerHTML = "Refresh to restart";
 }
 
 window.addEventListener("keydown", (e) => {

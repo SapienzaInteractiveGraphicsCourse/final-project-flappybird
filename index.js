@@ -11,6 +11,19 @@ let score = 0;
 let highscore = localStorage.getItem("highscore");
 export { score };
 
+if (
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  )
+) {
+  // some code..
+  document.getElementById("spacestart").innerHTML = "Tap screen to start";
+  document.getElementById("spacemove").innerHTML = "Tap screen to jump";
+  document.getElementById("spacestart").innerHTML =
+    "Swipe right and left to move horizontally";
+  document.getElementById("refres").innerHTML = "Refresh to restart";
+}
+
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
     case " ":
@@ -74,7 +87,7 @@ function init() {
   );
   camera.position.set(0, 10, -10);
   camera.lookAt(0, 0, -10);
-  camera.position.set(0, 15, -26.2);
+  camera.position.set(0, 10, -28);
 
   // Set up lights
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light

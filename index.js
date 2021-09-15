@@ -475,6 +475,9 @@ function setupEventListeners() {
       case "d":
         moveRight();
         break;
+      case "Enter":
+        location.reload();
+        break;
     }
   });
   let click = false;

@@ -470,6 +470,8 @@ function setupEventListeners() {
   let firstX = null;
   let firstY = null;
   document.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    alert("TouchStart");
     document.getElementById("gamestart").style.backgroundColor =
       "rgba(0, 0, 0, 0.5)";
     const firstTouch = e.touches[0];
@@ -478,9 +480,10 @@ function setupEventListeners() {
     click = true;
   });
   document.addEventListener("touchmove", (evt) => {
+    evt.preventDefault();
+    alert("TouchMove");
     document.getElementById("gamestart").style.backgroundColor =
       "rgba(0, 0, 0, 1)";
-    evt.preventDefault();
     if (!firstX || !firstY) {
       return;
     }
@@ -503,6 +506,8 @@ function setupEventListeners() {
     click = false;
   });
   document.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    alert("TouchEnd");
     if (!gameStarted) {
       document.getElementById("gamestart").style.display = "none";
       setupEventListeners();

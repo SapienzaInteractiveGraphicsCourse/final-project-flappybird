@@ -499,7 +499,6 @@ function setupEventListeners() {
   let firstX = null;
   let firstY = null;
   document.addEventListener("touchstart", (e) => {
-    e.preventDefault();
     const firstTouch = e.touches[0];
     firstX = firstTouch.clientX;
     firstY = firstTouch.clientY;
@@ -531,7 +530,6 @@ function setupEventListeners() {
     click = false;
   });
   document.addEventListener("touchend", (e) => {
-    e.preventDefault();
     if (click) {
       jump();
     } else if (left) {

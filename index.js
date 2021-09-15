@@ -469,12 +469,16 @@ function setupEventListeners() {
   let firstX = null;
   let firstY = null;
   document.addEventListener("touchstart", (e) => {
+    document.getElementById("gamestart").style.backgroundColor =
+      "rgba(0, 0, 0, 0.5)";
     const firstTouch = e.touches[0];
     firstX = firstTouch.clientX;
     firstY = firstTouch.clientY;
     click = true;
   });
   document.addEventListener("touchmove", (evt) => {
+    document.getElementById("gamestart").style.backgroundColor =
+      "rgba(0, 0, 0, 1)";
     evt.preventDefault();
     if (!firstX || !firstY) {
       return;

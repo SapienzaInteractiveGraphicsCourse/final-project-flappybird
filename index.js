@@ -25,6 +25,17 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+document.addEventListener("touchend", (e) => {
+  if (!gameStarted) {
+    document.getElementById("gamestart").style.display = "none";
+    setupEventListeners();
+    fpsInterval = 1000 / 60;
+    then = Date.now();
+    animate();
+    gameStarted = true;
+  }
+});
+
 const obstacle = {
   width: 4,
   maxHeight: 40,
@@ -469,17 +480,8 @@ function setupEventListeners() {
   let click = false;
   let firstX = null;
   let firstY = null;
-  window.addEventListener("click", (e) => {
-    alert("Window click");
-  });
-  window.addEventListener("touchstart", (e) => {
-    "Window touch";
-  });
   document.addEventListener("touchstart", (e) => {
     e.preventDefault();
-    alert("TouchStart");
-    document.getElementById("gamestart").style.backgroundColor =
-      "rgba(0, 0, 0, 0.5)";
     const firstTouch = e.touches[0];
     firstX = firstTouch.clientX;
     firstY = firstTouch.clientY;
@@ -487,9 +489,6 @@ function setupEventListeners() {
   });
   document.addEventListener("touchmove", (evt) => {
     evt.preventDefault();
-    alert("TouchMove");
-    document.getElementById("gamestart").style.backgroundColor =
-      "rgba(0, 0, 0, 1)";
     if (!firstX || !firstY) {
       return;
     }
@@ -513,15 +512,6 @@ function setupEventListeners() {
   });
   document.addEventListener("touchend", (e) => {
     e.preventDefault();
-    alert("TouchEnd");
-    if (!gameStarted) {
-      document.getElementById("gamestart").style.display = "none";
-      setupEventListeners();
-      fpsInterval = 1000 / 60;
-      then = Date.now();
-      animate();
-      gameStarted = true;
-    }
     if (click) {
       jump();
     }

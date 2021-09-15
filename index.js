@@ -502,10 +502,10 @@ function setupEventListeners() {
       /*most significant*/
       if (xDiff > 0) {
         /* right swipe */
-        moveRight();
+        moveLeft();
       } else {
         /* left swipe */
-        moveLeft();
+        moveRight();
       }
     }
     click = false;

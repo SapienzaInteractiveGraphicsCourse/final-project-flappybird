@@ -74,7 +74,7 @@ function init() {
   );
   camera.position.set(0, 10, -10);
   camera.lookAt(0, 0, -10);
-  camera.position.set(0, 10, -26.2);
+  camera.position.set(0, 15, -26.2);
 
   // Set up lights
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
@@ -268,7 +268,7 @@ function updatePhysics() {
     flappy.three.position.copy(flappy.cannon.position);
     // flappy.three.quaternion.copy(flappy.cannon.quaternion);
     camera.position.x = flappy.cannon.position.x;
-    camera.position.z = flappy.cannon.position.z - 1.2;
+    camera.position.z = flappy.cannon.position.z - 4.2;
     camera.position.y = flappy.cannon.position.y + 10;
   }
 }
@@ -478,6 +478,8 @@ function setupEventListeners() {
     }
   });
   let click = false;
+  let right = false;
+  let left = false;
   let firstX = null;
   let firstY = null;
   document.addEventListener("touchstart", (e) => {
@@ -486,6 +488,8 @@ function setupEventListeners() {
     firstX = firstTouch.clientX;
     firstY = firstTouch.clientY;
     click = true;
+    left = false;
+    right = false;
   });
   document.addEventListener("touchmove", (evt) => {
     evt.preventDefault();
@@ -502,10 +506,10 @@ function setupEventListeners() {
       /*most significant*/
       if (xDiff > 0) {
         /* right swipe */
-        moveLeft();
+        left = true;
       } else {
         /* left swipe */
-        moveRight();
+        right = true;
       }
     }
     click = false;
@@ -514,6 +518,10 @@ function setupEventListeners() {
     e.preventDefault();
     if (click) {
       jump();
+    } else if (left) {
+      moveLeft();
+    } else if (right) {
+      moveRight();
     }
   });
 }

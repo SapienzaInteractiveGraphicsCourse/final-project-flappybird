@@ -469,6 +469,12 @@ function setupEventListeners() {
   let click = false;
   let firstX = null;
   let firstY = null;
+  window.addEventListener("click", (e) => {
+    alert("Window click");
+  });
+  window.addEventListener("touchstart", (e) => {
+    "Window touch";
+  });
   document.addEventListener("touchstart", (e) => {
     e.preventDefault();
     alert("TouchStart");

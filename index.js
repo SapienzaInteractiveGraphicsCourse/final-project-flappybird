@@ -9,6 +9,7 @@ let gameStarted = false;
 let gameOver = false;
 let score = 0;
 let highscore = localStorage.getItem("highscore");
+export { score };
 
 window.addEventListener("keydown", (e) => {
   switch (e.key) {

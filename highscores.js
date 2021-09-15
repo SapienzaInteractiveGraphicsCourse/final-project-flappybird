@@ -8,6 +8,8 @@ import {
   get,
   onValue,
 } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js";
+import { score } from "./index.js";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -92,12 +94,12 @@ function showHighscore() {
 
 document.getElementById("name").addEventListener("change", (e) => {
   document.getElementById("nameinput").style.display = "none";
-  const name = e.target.value;
-  const score = document.getElementById("endscore").innerHTML;
+  const name = e.target.value.slice(0, 20);
+  const newScore = score;
   get(highscoreRef).then((snapshot) => {
     highscores = snapshot.val();
     console.log("DAMANE", highscores);
-    highscores.push({ name: name, score: score });
+    highscores.push({ name: name, score: newScore });
     writeToDB();
   });
 });

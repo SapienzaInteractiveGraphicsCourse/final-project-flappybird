@@ -465,4 +465,16 @@ function setupEventListeners() {
         break;
     }
   });
+  let click = false;
+  document.addEventListener("touchstart", () => {
+    click = true;
+  });
+  document.addEventListener("touchmove", () => {
+    click = false;
+  });
+  document.addEventListener("touchend", () => {
+    if (click) {
+      jump();
+    }
+  });
 }

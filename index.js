@@ -218,7 +218,7 @@ function animate() {
     TWEEN.update();
     if (flappy.cannon) {
       flappy.cannon.position.y -= speed;
-      if (flappy.cannon.position.z < -obstacle.maxHeight + 2) {
+      if (flappy.cannon.position.z < -obstacle.maxHeight + 2.5) {
         flappy.cannon.velocity.z = 1;
       }
       const body = flappy.three;
@@ -268,7 +268,7 @@ function updatePhysics() {
     flappy.three.position.copy(flappy.cannon.position);
     // flappy.three.quaternion.copy(flappy.cannon.quaternion);
     camera.position.x = flappy.cannon.position.x;
-    camera.position.z = flappy.cannon.position.z - 4.2;
+    camera.position.z = flappy.cannon.position.z - 3;
     camera.position.y = flappy.cannon.position.y + 10;
   }
 }
@@ -277,7 +277,7 @@ function addSurface() {
   const wall = new THREE.BoxGeometry(
     surface.height,
     surface.depth,
-    obstacle.maxHeight
+    obstacle.maxHeight + 3.4
   );
   const colorSky = new THREE.Color(`hsl(201, 100%, 50%)`);
   const materialWall = new THREE.MeshBasicMaterial({ color: colorSky });
@@ -287,7 +287,7 @@ function addSurface() {
   const wall2 = new THREE.BoxGeometry(
     surface.height,
     surface.depth,
-    obstacle.maxHeight
+    obstacle.maxHeight + 3.4
   );
   const newWall = new THREE.Mesh(wall2, materialWall);
   newWall.position.set(surface.width / 2, -150, -obstacle.maxHeight / 2); // x, y, z
@@ -298,7 +298,7 @@ function addSurface() {
     surface.height
   );
   const roof = new THREE.Mesh(roofgeo, materialWall);
-  roof.position.set(0, -150, -obstacle.maxHeight); // x, y, z
+  roof.position.set(0, -150, -obstacle.maxHeight - 1.7); // x, y, z
   scene.add(roof);
 
   // Three JS

@@ -254,12 +254,17 @@ function animate() {
         }
         document.getElementById("score").innerHTML = score;
         console.log(score);
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 12; i++) {
           obstacles[i].three.geometry.dispose();
           obstacles[i].three.material.dispose();
           scene.remove(obstacles[i].three);
         }
-        obstacles.splice(0, 6);
+        for (let i = 0; i < 12; i++) {
+          if (obstacles[i].cannon) {
+            world.remove(obstacles[i].cannon);
+          }
+        }
+        obstacles.splice(0, 12);
         addObstacle(
           obstacles[obstacles.length - 1].three.position.y - obstacle.depthSpace
         );
@@ -274,8 +279,10 @@ function animate() {
 function updatePhysics() {
   world.step(1 / 60);
   obstacles.forEach((element) => {
-    element.three.position.copy(element.cannon.position);
-    element.three.quaternion.copy(element.cannon.quaternion);
+    if (element.cannon) {
+      element.three.position.copy(element.cannon.position);
+      element.three.quaternion.copy(element.cannon.quaternion);
+    }
   });
   if (flappy.three) {
     flappy.three.position.copy(flappy.cannon.position);
@@ -287,6 +294,7 @@ function updatePhysics() {
 }
 
 function addSurface() {
+  const y = -surface.depth / 2;
   const wall = new THREE.BoxGeometry(
     surface.height,
     surface.depth,
@@ -295,7 +303,7 @@ function addSurface() {
   const colorSky = new THREE.Color(`hsl(201, 100%, 50%)`);
   const materialWall = new THREE.MeshBasicMaterial({ color: colorSky });
   const meshWall = new THREE.Mesh(wall, materialWall);
-  meshWall.position.set(-surface.width / 2, -150, -obstacle.maxHeight / 2); // x, y, z
+  meshWall.position.set(-surface.width / 2, y, -obstacle.maxHeight / 2); // x, y, z
   scene.add(meshWall);
   const wall2 = new THREE.BoxGeometry(
     surface.height,
@@ -303,7 +311,7 @@ function addSurface() {
     obstacle.maxHeight + 3.4
   );
   const newWall = new THREE.Mesh(wall2, materialWall);
-  newWall.position.set(surface.width / 2, -150, -obstacle.maxHeight / 2); // x, y, z
+  newWall.position.set(surface.width / 2, y, -obstacle.maxHeight / 2); // x, y, z
   scene.add(newWall);
   const roofgeo = new THREE.BoxGeometry(
     surface.width,
@@ -311,7 +319,7 @@ function addSurface() {
     surface.height
   );
   const roof = new THREE.Mesh(roofgeo, materialWall);
-  roof.position.set(0, -150, -obstacle.maxHeight - 1.7); // x, y, z
+  roof.position.set(0, y, -obstacle.maxHeight - 1.7); // x, y, z
   scene.add(roof);
 
   // Three JS
@@ -323,7 +331,7 @@ function addSurface() {
   const color = new THREE.Color(`hsl(30, 100%, 50%)`);
   const material = new THREE.MeshToonMaterial({ color });
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(0, -150, 0); // x, y, z
+  mesh.position.set(0, y, 0); // x, y, z
   scene.add(mesh);
 
   // Cannon JS
@@ -332,7 +340,7 @@ function addSurface() {
   );
   let mass = 0;
   const body = new CANNON.Body({ mass, shape });
-  body.position.set(0, -150, 0);
+  body.position.set(0, y, 0);
   world.addBody(body);
 
   const numObstacleRows = surface.depth / (30 * obstacle.depthSpace);
@@ -370,6 +378,7 @@ function createObstacle(x, y, width) {
   const topcyl = new THREE.Mesh(topgeom, material);
   topcyl.position.set(x, y, -height + 1.5);
   scene.add(topcyl);
+  obstacles.push({ three: topcyl, cannon: null });
   // Cannon JS
   const shape = new CANNON.Cylinder(width, width, height, 32);
   const massive = 0;
@@ -394,6 +403,7 @@ function createObstacle(x, y, width) {
   const topcyl2 = new THREE.Mesh(topgeom2, material2);
   topcyl2.position.set(x, y, -obstacle.maxHeight + height2 - 1.5);
   scene.add(topcyl2);
+  obstacles.push({ three: topcyl2, cannon: null });
 
   const shape2 = new CANNON.Cylinder(width, width, height2, 32);
   const mass2 = 0;

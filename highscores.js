@@ -93,8 +93,14 @@ function showHighscore() {
 }
 
 document.getElementById("name").addEventListener("change", (e) => {
-  document.getElementById("nameinput").style.display = "none";
-  const name = e.target.value.slice(0, 20);
+  document
+    .getElementById("newhighscore")
+    .removeChild(document.getElementById("nameinput"));
+  let name = e.target.value;
+  if (/<\/?[a-z][\s\S]*>/i.test(name)) {
+    name = "TriedHackingDidntWork";
+  }
+  name = name.slice(0, 25);
   const newScore = score;
   get(highscoreRef).then((snapshot) => {
     highscores = snapshot.val();

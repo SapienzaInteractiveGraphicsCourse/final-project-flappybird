@@ -108,7 +108,6 @@ function writeToDB() {
   highscores.sort((a, b) => {
     return b.score - a.score;
   });
-  highscores = highscores.slice(0, 10);
   set(ref(db, "/"), {
     highscores: highscores,
   });

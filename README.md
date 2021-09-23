@@ -1,5 +1,6 @@
-# final-project-flappybird
+# final-project-flappybird 3D
 
-final-project-flappybird created by GitHub Classroom
+This game can be played by following this link:
+https://sapienzainteractivegraphicscourse.github.io/final-project-flappybird/
 
-"Flappy bird 3D (Vertex Colors)" (https://skfb.ly/6RHXo) by XtremeZero is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+Another option is to clone the code, and run it locally by starting a local server using the command "python -m http.server".
